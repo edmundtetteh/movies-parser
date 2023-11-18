@@ -81,15 +81,14 @@ pipeline {
         stage('Quality Tests') {
             steps {
                 script {
-                    def imageTest = docker.build("${imageName}-test", "-f Dockerfile.test .")
-                    imageTest.inside {
-                        sh 'golint'
-                    }
+                    sh "docker build -t ${imageName}-test -f Dockerfile.test ."
+                    sh "docker run --rm ${imageName}-test golint"
                 }
             }
         }
     }
 }
+
 
 
 
