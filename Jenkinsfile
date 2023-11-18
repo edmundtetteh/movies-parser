@@ -42,23 +42,54 @@
 //     // Add more stage
 // }
 
-def imageName = 'edmundtetteh/movies-parser'
-def registry = 'https://registry.slowcoder.com'
+// def imageName = 'edmundtetteh/movies-parser'
+// def registry = 'https://registry.slowcoder.com'
 
-node('dev') {
-    stage('Checkout') {
-        checkout([$class: 'GitSCM', branches: [[name: 'develop']],
-                  userRemoteConfigs: [[url: 'https://github.com/edmundtetteh/movies-parser.git']],
-                  credentialsId: 'ubuntu-jenkins'])
+// node('dev') {
+//     stage('Checkout') {
+//         checkout([$class: 'GitSCM', branches: [[name: 'develop']],
+//                   userRemoteConfigs: [[url: 'https://github.com/edmundtetteh/movies-parser.git']],
+//                   credentialsId: 'ubuntu-jenkins'])
+//     }
+
+
+//     stage('Quality Tests'){
+//        def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
+//         imageTest.inside{
+//             sh 'golint'
+//         }
+//     }
+// }
+
+pipeline {
+    agent { label 'dev' }
+
+    environment {
+        imageName = 'edmundtetteh/movies-parser'
+        registry = 'https://registry.slowcoder.com'
     }
 
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout([$class: 'GitSCM', branches: [[name: 'develop']],
+                          userRemoteConfigs: [[url: 'https://github.com/edmundtetteh/movies-parser.git']],
+                          credentialsId: 'ubuntu-jenkins'])
+            }
+        }
 
-    stage('Quality Tests'){
-       def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
-        imageTest.inside{
-            sh 'golint'
+        stage('Quality Tests') {
+            steps {
+                script {
+                    def imageTest = docker.build("${imageName}-test", "-f Dockerfile.test .")
+                    imageTest.inside {
+                        sh 'golint'
+                    }
+                }
+            }
         }
     }
 }
+
 
 
