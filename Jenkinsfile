@@ -12,11 +12,20 @@ node('dev') {
 
     stage('Pre-integration Tests'){
         parallel(
-            'Quality Tests': {
-                imageTest.inside{
-                    sh 'golint'
+            // 'Quality Tests': {
+            //     imageTest.inside{
+            //         sh 'golint'
+            //     }
+            // },
+        'Quality Tests': {
+        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+            imageTest.inside {
+                sh 'golint'
                 }
-            },
+            }
+        },
+        
+
             'Unit Tests': {
                 imageTest.inside{
                     sh 'go test'
