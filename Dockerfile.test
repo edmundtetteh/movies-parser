@@ -12,10 +12,21 @@
 
 # RUN go get -v 
 
+# FROM golang:1.13.4
+# WORKDIR /go/src/github.com/edmundtetteh/movies-loader
+# ENV GOCACHE /tmp
+# WORKDIR /go/src/github/edmundtetteh/movies-parser
+# RUN go get -u golang.org/x/lint/golint
+# COPY . .
+# RUN go get -v
+
 FROM golang:1.13.4
-WORKDIR /go/src/github.com/edmundtetteh/movies-loader
+
+WORKDIR /go/src/github.com/edmundtetteh/movies-parser
 ENV GOCACHE /tmp
-WORKDIR /go/src/github/edmundtetteh/movies-parser
-RUN go get -u golang.org/x/lint/golint
+
+RUN go get -u golang.org/x/lint/golint@v0.0.0-20200302205851-738671d3881b
 COPY . .
+
+
 RUN go get -v
