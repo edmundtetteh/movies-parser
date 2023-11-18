@@ -5,6 +5,26 @@ node('dev') {
                 credentialsId: 'ubuntu-jenkins'])
     }
 
+    stage('Pre-integration Tests'){
+        parallel(
+            'Quality Tests': {
+                imageTest.inside{
+                    sh 'golint'
+                }
+            },
+            'Unit Tests': {
+                imageTest.inside{
+                    sh 'go test'
+                }
+            },
+            'Security Tests': {
+                imageTest.inside('-u root:root'){
+                    sh 'nancy /go/src/github/mlabouardy/movies-parser/Gopkg.lock'
+                }
+            }
+        )
+}
+
     // Add more stage
 }
 
