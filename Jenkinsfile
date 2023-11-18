@@ -1,11 +1,11 @@
 node('dev') {
     stage('Checkout') {
-        steps {
-            git branch: 'develop',
-                credentialsId: 'ubuntu-jenkins',
-                url: 'git@github.com:edmundtetteh/movies-loader.git'
-        }
+        checkout([$class: 'GitSCM', branches: [[name: 'develop']],
+                userRemoteConfigs: [[url: 'https://github.com/edmundtetteh/movies-parser.git']],
+                credentialsId: 'ubuntu-jenkins'])
     }
+
+    // Add more stage
 }
 
 
