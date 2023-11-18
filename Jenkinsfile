@@ -52,18 +52,13 @@ node('dev') {
                   credentialsId: 'ubuntu-jenkins'])
     }
 
-    // Build the Docker images
-        sh "docker build -t ${imageName}-test -f Dockerfile.test ."
 
-       
-        stage('Quality Tests') {
-            def imageTest = docker.image("${imageName}-test").inside {
-                sh 'golint'
-            }
+    stage('Quality Tests'){
+       def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
+        imageTest.inside{
+            sh 'golint'
         }
-    
-
-    // Add more stages as needed
+    }
 }
 
 
