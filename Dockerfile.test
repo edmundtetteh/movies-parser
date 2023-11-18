@@ -21,3 +21,11 @@ RUN go get -v
 
 # Your other Dockerfile commands go here
 # ...
+
+FROM golang:1.13.4
+WORKDIR /go/src/github.com/edmundtetteh/movies-loader
+ENV GOCACHE /tmp
+WORKDIR /go/src/github/edmundtetteh/movies-parser
+RUN go get -u golang.org/x/lint/golint
+COPY . .
+RUN go get -v
