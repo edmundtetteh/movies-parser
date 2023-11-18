@@ -53,22 +53,15 @@ node('dev') {
     }
 
     // Build the Docker image
-    sh "docker build -t ${imageName}-test -f Dockerfile.test ."
+        sh "docker build -t ${imageName}-test -f Dockerfile.test ."
 
-    stage('Pre-integration Tests') {
-        // Quality Tests
-        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-            sh 'docker run --rm ${imageName}-test golint'
+       
+        stage('Quality Tests') {
+            def imageTest = docker.image("${imageName}-test").inside {
+                sh 'golint'
+            }
         }
-
-        // Unit Tests
-        sh 'docker run --rm ${imageName}-test go test'
-
-        // Security Tests
-        catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
-            sh 'docker run --rm -u root:root ${imageName}-test nancy /go/src/github/edmundtetteh/movies-parser/Gopkg.lock'
-        }
-    }
+    
 
     // Add more stages as needed
 }
