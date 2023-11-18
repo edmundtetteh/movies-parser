@@ -1,9 +1,14 @@
+def imageName = 'edmundtetteh/movies-parser'
+def registry = 'https://registry.slowcoder.com'
+
 node('dev') {
     stage('Checkout') {
         checkout([$class: 'GitSCM', branches: [[name: 'develop']],
                 userRemoteConfigs: [[url: 'https://github.com/edmundtetteh/movies-parser.git']],
                 credentialsId: 'ubuntu-jenkins'])
     }
+
+    def imageTest= docker.build("${imageName}-test", "-f Dockerfile.test .")
 
     stage('Pre-integration Tests'){
         parallel(
