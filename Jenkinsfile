@@ -52,7 +52,7 @@ node('dev') {
                   credentialsId: 'ubuntu-jenkins'])
     }
 
-    // Build the Docker images
+    // Build the Docker image
         sh "docker build -t ${imageName}-test -f Dockerfile.test ."
 
        
