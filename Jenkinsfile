@@ -19,7 +19,7 @@ node('dev') {
             },
             'Security Tests': {
                 imageTest.inside('-u root:root'){
-                    sh 'nancy /go/src/github/mlabouardy/movies-parser/Gopkg.lock'
+                    sh 'nancy /go/src/github/edmund/movies-parser/Gopkg.lock'
                 }
             }
         )
