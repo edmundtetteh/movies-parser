@@ -15,32 +15,24 @@
 
 # RUN go get -v 
 
-# Use a smaller base image for testing
+# Use an image with Go preinstalled
 FROM golang:1.16-alpine AS builder
 
-# Set the working directory inside the container
 WORKDIR /go/src/github/edmundtetteh/movies-parser
 
-# Copy only the necessary files for testing
 COPY go.mod go.sum ./
-
-# Download dependencies
 RUN go mod download
 
-# Copy the rest of the application code
 COPY . .
 
 # Build the Go application
-RUN go build -o myapp
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
 
-# Stage 2: Final image for running tests
-FROM alpine:latest AS tester
-
-# Set the working directory inside the container
-WORKDIR /app
+# Create a minimal image without unnecessary dependencies
+FROM scratch
 
 # Copy the built binary from the builder stage
-COPY --from=builder /go/src/github/edmundtetteh/movies-parser/myapp .
+COPY --from=builder /go/src/github/edmundtetteh/movies-parser/app /
 
-# Specify the command to run on container start
-CMD ["./myapp"]
+# Set the binary as the entry point
+ENTRYPOINT ["/app"]
