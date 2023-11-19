@@ -52,8 +52,13 @@ node('dev') {
     stage('Unit Tests'){
         // Run go test inside the Docker container
     sh "docker run --rm ${imageName}-test go test"
-    
+    }
+
+    stage('Security Tests') {
+    // Run commands inside the Docker container with a specific user
+    sh "docker run -u root:root ${imageName}-test nancy /go/src/github/${imageName}/Gopkg.lock"
     }
 }
+
 
 
