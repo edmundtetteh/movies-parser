@@ -44,7 +44,7 @@ node('dev') {
     stage('Quality Tests') {
         // Build the Docker image
         sh "docker build -t ${imageName}-test -f Dockerfile.test ."
-        sh "docker inspect -j ${imageName}-test | jq .[0].Config.Architecture"
+       
 
 
     //     // Run golint inside the Docker container
@@ -60,6 +60,13 @@ node('dev') {
     // // Run commands inside the Docker container with a specific user
     // sh "docker run -u root:root ${imageName}-test nancy /go/src/github/${imageName}/Gopkg.lock"
     // }
+    
+}
+stage('Get Architecture') {
+    script {
+        def architecture = sh(script: "docker exec ${imageName}-test jq .[0].Config.Architecture", returnStdout: true).trim()
+        echo "Docker Image Architecture: ${architecture}"
+    }
 }
 }
 
