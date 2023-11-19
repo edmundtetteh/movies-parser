@@ -26,7 +26,7 @@
 //     }
 // }
 
-/*
+
 node('dev') {
     // Define environment variable
     def imageName = 'edmundtetteh/movies-parser'
@@ -61,46 +61,9 @@ node('dev') {
     
 }
 
-*/
 
-pipeline {
-    agent any
-    
-    environment {
-        imageName = 'edmundtetteh/movies-parser'
-    }
 
-    stages {
-        stage('Checkout') {
-            steps {
-                // Git checkout
-                checkout([$class: 'GitSCM', branches: [[name: 'develop']],
-                          userRemoteConfigs: [[url: 'https://github.com/edmundtetteh/movies-parser.git']],
-                          credentialsId: 'ubuntu-jenkins'])
-            }
-        }
 
-        stage('Quality Tests and Get Architecture') {
-            steps {
-                // Build the Docker image
-                script {
-                    sh "docker build -t ${imageName}-test -f Dockerfile.test ."
-                }
-
-                // Run golint inside the Docker container
-                script {
-                    sh "docker run --rm ${imageName}-test golint"
-                }
-
-                // Get the Docker image architecture
-                script {
-                    def architecture = sh(script: "docker exec ${imageName}-test jq .[0].Config.Architecture", returnStdout: true).trim()
-                    echo "Docker Image Architecture: ${architecture}"
-                }
-            }
-        }
-    }
-}
 
 
 
