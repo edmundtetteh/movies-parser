@@ -63,11 +63,13 @@ node('dev') {
 
 */
 
-def imageName = 'edmundtetteh/movies-parser'
-
 pipeline {
     agent any
     
+    environment {
+        imageName = 'edmundtetteh/movies-parser'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -81,14 +83,20 @@ pipeline {
         stage('Quality Tests and Get Architecture') {
             steps {
                 // Build the Docker image
-                sh "docker build -t ${imageName}-test -f Dockerfile.test ."
+                script {
+                    sh "docker build -t ${imageName}-test -f Dockerfile.test ."
+                }
 
                 // Run golint inside the Docker container
-                sh "docker run --rm ${imageName}-test golint"
+                script {
+                    sh "docker run --rm ${imageName}-test golint"
+                }
 
                 // Get the Docker image architecture
-                def architecture = sh(script: "docker exec ${imageName}-test jq .[0].Config.Architecture", returnStdout: true).trim()
-                echo "Docker Image Architecture: ${architecture}"
+                script {
+                    def architecture = sh(script: "docker exec ${imageName}-test jq .[0].Config.Architecture", returnStdout: true).trim()
+                    echo "Docker Image Architecture: ${architecture}"
+                }
             }
         }
     }
