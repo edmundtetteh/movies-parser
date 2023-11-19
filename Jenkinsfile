@@ -63,25 +63,37 @@ node('dev') {
 
 */
 
-node('dev') {
-    // ... (Previous stages)
+def imageName = 'edmundtetteh/movies-parser'
 
-    // Stage: Quality Tests and Get Architecture
-    stage('Quality Tests and Get Architecture') {
-        // Build the Docker image
-        sh "docker build -t ${imageName}-test -f Dockerfile.test ."
+pipeline {
+    agent any
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                // Git checkout
+                checkout([$class: 'GitSCM', branches: [[name: 'develop']],
+                          userRemoteConfigs: [[url: 'https://github.com/edmundtetteh/movies-parser.git']],
+                          credentialsId: 'ubuntu-jenkins'])
+            }
+        }
 
-        // Run golint inside the Docker container
-        sh "docker run --rm ${imageName}-test golint"
+        stage('Quality Tests and Get Architecture') {
+            steps {
+                // Build the Docker image
+                sh "docker build -t ${imageName}-test -f Dockerfile.test ."
 
-        // Start the Docker container
-        sh "docker run -d --name ${imageName}-test ${imageName}-test"
+                // Run golint inside the Docker container
+                sh "docker run --rm ${imageName}-test golint"
 
-        // Get the Docker image architecture
-        def architecture = sh(script: "docker exec ${imageName}-test jq .[0].Config.Architecture", returnStdout: true).trim()
-        echo "Docker Image Architecture: ${architecture}"
+                // Get the Docker image architecture
+                def architecture = sh(script: "docker exec ${imageName}-test jq .[0].Config.Architecture", returnStdout: true).trim()
+                echo "Docker Image Architecture: ${architecture}"
+            }
+        }
     }
 }
+
 
 
 
