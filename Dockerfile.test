@@ -1,6 +1,6 @@
 FROM golang:1.16
 
-ENV VERSION v1.0.22
+ENV VERSION v1.0.42
 ENV GOCACHE /tmp
 WORKDIR /go/src/github/edmundtetteh/movies-parser
 
