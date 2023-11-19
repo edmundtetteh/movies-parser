@@ -1,17 +1,46 @@
-FROM golang:1.16
+# FROM golang:1.16
 
-ENV VERSION v1.0.42
-ENV GOCACHE /tmp
+# ENV VERSION v1.0.42
+# ENV GOCACHE /tmp
+# WORKDIR /go/src/github/edmundtetteh/movies-parser
+
+
+# RUN curl -o nancy \
+#     https://github.com/sonatype-nexus-community/nancy/releases/download/$VERSION/nancy-linux.amd64-$VERSION && \
+#     chmod +x nancy && mv nancy /usr/local/bin/nancy
+
+# RUN go get -u golang.org/x/lint/golint
+
+# COPY . .
+
+# RUN go get -v 
+
+# Use a smaller base image for testing
+FROM golang:1.16-alpine AS builder
+
+# Set the working directory inside the container
 WORKDIR /go/src/github/edmundtetteh/movies-parser
 
-RUN apt-get update && apt-get install -y jq
+# Copy only the necessary files for testing
+COPY go.mod go.sum ./
 
-RUN curl -o nancy \
-    https://github.com/sonatype-nexus-community/nancy/releases/download/$VERSION/nancy-linux.amd64-$VERSION && \
-    chmod +x nancy && mv nancy /usr/local/bin/nancy
+# Download dependencies
+RUN go mod download
 
-RUN go get -u golang.org/x/lint/golint
-
+# Copy the rest of the application code
 COPY . .
 
-RUN go get -v 
+# Build the Go application
+RUN go build -o myapp
+
+# Stage 2: Final image for running tests
+FROM alpine:latest AS tester
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy the built binary from the builder stage
+COPY --from=builder /go/src/github/edmundtetteh/movies-parser/myapp .
+
+# Specify the command to run on container start
+CMD ["./myapp"]
