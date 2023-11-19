@@ -61,6 +61,7 @@ node('dev') {
     // sh "docker run -u root:root ${imageName}-test nancy /go/src/github/${imageName}/Gopkg.lock"
     // }
 }
+}
 
 
 
