@@ -53,6 +53,15 @@ pipeline {
             }
         }
 
+        stage('Prepare for Tests') {
+            steps {
+                script {
+                    // Copy only the necessary files for testing
+                    sh 'cp go.mod go.sum Dockerfile.test .'
+                }
+            }
+        }
+
         stage('Quality Tests') {
             steps {
                 script {
@@ -84,6 +93,7 @@ pipeline {
         }
     }
 }
+
 
 
 
