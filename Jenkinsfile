@@ -48,6 +48,12 @@ node('dev') {
         // Run golint inside the Docker container
         sh "docker run --rm ${imageName}-test golint"
     }
+
+    stage('Unit Tests'){
+        // Run go test inside the Docker container
+    sh "docker run --rm ${imageName}-test go test"
+    
+    }
 }
 
 
