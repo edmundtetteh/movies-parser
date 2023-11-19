@@ -58,9 +58,12 @@ pipeline {
                 script {
                     // Ensure that go.mod and go.sum are available
                     sh 'go mod download'
-                    
-                    // Copy the necessary files for testing
-                    sh 'cp go.mod go.sum Dockerfile.test .'
+
+                    // Create a directory for files
+                    sh 'mkdir -p test-files'
+
+                    // Copy the necessary files for testing to the directory
+                    sh 'cp go.mod go.sum Dockerfile.test test-files/'
                 }
             }
         }
@@ -69,7 +72,7 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image for testing
-                    sh "docker build -t ${imageName}-test -f Dockerfile.test ."
+                    sh "docker build -t ${imageName}-test -f test-files/Dockerfile.test ."
 
                     // Run tests inside the Docker container
                     sh "docker run --rm ${imageName}-test"
@@ -96,6 +99,7 @@ pipeline {
         }
     }
 }
+
 
 
 
