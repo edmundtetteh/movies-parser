@@ -28,7 +28,7 @@
 
 
 node('dev') {
-    // Define environment variables
+    // Define environment variable
     def imageName = 'edmundtetteh/movies-parser'
     def registry = 'https://registry.slowcoder.com'
 
