@@ -44,8 +44,8 @@ node('dev') {
     stage('Quality Tests') {
         // Build the Docker image
         sh "docker build -t ${imageName}-test -f Dockerfile.test ."
-        sh "docker inspect -j ${imageName}-test | jq .[0].Config.Architecture
-"
+        sh "docker inspect -j ${imageName}-test | jq .[0].Config.Architecture"
+
 
     //     // Run golint inside the Docker container
     //     sh "docker run --rm ${imageName}-test golint"
