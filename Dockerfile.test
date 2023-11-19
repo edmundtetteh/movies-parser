@@ -1,38 +1,18 @@
-# FROM golang:1.16
+FROM golang:1.16
 
-# ENV VERSION v1.0.42
-# ENV GOCACHE /tmp
-# WORKDIR /go/src/github/edmundtetteh/movies-parser
-
-
-# RUN curl -o nancy \
-#     https://github.com/sonatype-nexus-community/nancy/releases/download/$VERSION/nancy-linux.amd64-$VERSION && \
-#     chmod +x nancy && mv nancy /usr/local/bin/nancy
-
-# RUN go get -u golang.org/x/lint/golint
-
-# COPY . .
-
-# RUN go get -v 
-
-# Use an image with Go preinstalled
-FROM golang:1.16-alpine AS builder
-
+ENV VERSION v1.0.42
+ENV GOCACHE /tmp
 WORKDIR /go/src/github/edmundtetteh/movies-parser
 
-COPY go.mod go.sum ./
-RUN go mod download
+
+RUN curl -o nancy \
+    https://github.com/sonatype-nexus-community/nancy/releases/download/$VERSION/nancy-linux.amd64-$VERSION && \
+    chmod +x nancy && mv nancy /usr/local/bin/nancy
+
+RUN go get -u golang.org/x/lint/golint
 
 COPY . .
 
-# Build the Go application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
+RUN go get -v 
 
-# Create a minimal image without unnecessary dependencies
-FROM scratch
 
-# Copy the built binary from the builder stage
-COPY --from=builder /go/src/github/edmundtetteh/movies-parser/app /
-
-# Set the binary as the entry point
-ENTRYPOINT ["/app"]
