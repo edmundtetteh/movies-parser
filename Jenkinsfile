@@ -64,17 +64,7 @@ node('dev') {
 */
 
 node('dev') {
-    // Define environment variable
-    def imageName = 'edmundtetteh/movies-parser'
-    def registry = 'https://registry.slowcoder.com'
-
-    // Stage: Checkout
-    stage('Checkout') {
-        // Git checkout
-        checkout([$class: 'GitSCM', branches: [[name: 'develop']],
-                  userRemoteConfigs: [[url: 'https://github.com/edmundtetteh/movies-parser.git']],
-                  credentialsId: 'ubuntu-jenkins'])
-    }
+    // ... (Previous stages)
 
     // Stage: Quality Tests and Get Architecture
     stage('Quality Tests and Get Architecture') {
@@ -84,11 +74,15 @@ node('dev') {
         // Run golint inside the Docker container
         sh "docker run --rm ${imageName}-test golint"
 
+        // Start the Docker container
+        sh "docker run -d --name ${imageName}-test ${imageName}-test"
+
         // Get the Docker image architecture
         def architecture = sh(script: "docker exec ${imageName}-test jq .[0].Config.Architecture", returnStdout: true).trim()
         echo "Docker Image Architecture: ${architecture}"
     }
 }
+
 
 
 
