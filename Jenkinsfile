@@ -56,6 +56,9 @@ pipeline {
         stage('Prepare for Tests') {
             steps {
                 script {
+                    // Install Go
+                    sh 'apt-get update && apt-get install -y golang'
+
                     // Ensure that go.mod and go.sum are available
                     sh 'go mod download'
 
@@ -99,6 +102,7 @@ pipeline {
         }
     }
 }
+
 
 
 
